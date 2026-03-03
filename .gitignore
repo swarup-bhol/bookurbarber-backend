@@ -1,0 +1,17 @@
+target/
+*.class
+*.jar
+*.war
+.DS_Store
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+application-secrets.properties
+.env
+.env.*
+*.log
+logs/

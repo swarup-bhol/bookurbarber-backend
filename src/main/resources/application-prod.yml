@@ -1,0 +1,114 @@
+spring:
+  application:
+    name: trimly-backend
+
+  # ── Database ──────────────────────────────────────────────────────────────
+  datasource:
+    url: jdbc:mysql://${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ${MYSQLUSER}
+    password: ${MYSQLPASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:10}
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      pool-name: TrimlyPool
+
+  # ── JPA ───────────────────────────────────────────────────────────────────
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: false
+        jdbc:
+          time_zone: Asia/Kolkata
+    open-in-view: false
+
+  # ── Jackson ───────────────────────────────────────────────────────────────
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+    time-zone: Asia/Kolkata
+
+  # ── Cache (Caffeine — OTP + rate limiting) ────────────────────────────────
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=10000,expireAfterWrite=10m
+
+# ── Server ────────────────────────────────────────────────────────────────────
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+  servlet:
+    context-path: /
+
+# ── App custom config ─────────────────────────────────────────────────────────
+app:
+  # JWT
+  jwt:
+    secret: ${JWT_SECRET}
+    # Access token: 1 year — effectively permanent until logout
+    # We use refresh token deletion as the logout mechanism, not expiry
+    access-expiration-ms: ${JWT_ACCESS_MS:31536000000}
+    # Refresh token: 10 years — never expires unless user explicitly logs out
+    # Stored in DB, deleted on logout → that IS the session termination
+    refresh-expiration-ms: ${JWT_REFRESH_MS:315360000000}
+
+  # CORS
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:4200,http://localhost:3000}
+
+  # Platform defaults
+  platform:
+    commission-pct: ${COMMISSION_PCT:10}
+    otp-expiry-minutes: ${OTP_EXPIRY_MIN:10}
+    otp-length: 6
+    max-otp-attempts: 3
+
+  # WhatsApp Business API (Meta Cloud API)
+  # Set these in external application-secrets.properties or env vars
+  whatsapp:
+    enabled: ${WA_ENABLED:false}
+    base-url: ${WA_BASE_URL:https://graph.facebook.com/v19.0}
+    phone-number-id: ${WA_PHONE_NUMBER_ID:}
+    access-token: ${WA_ACCESS_TOKEN:}
+    # Template names (must be pre-approved in Meta Business Manager)
+    template:
+      booking-request: trimly_booking_request
+      booking-confirmed: trimly_booking_confirmed
+      booking-rejected: trimly_booking_rejected
+      booking-cancelled: trimly_booking_cancelled
+      booking-completed: trimly_booking_completed
+      reschedule-request: trimly_reschedule_request
+      reschedule-response: trimly_reschedule_response
+      otp-login: trimly_otp_login
+      password-reset: trimly_password_reset
+    language: en_IN
+
+# ── Actuator ──────────────────────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+logging:
+  level:
+    com.trimly: ${LOG_LEVEL:INFO}
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

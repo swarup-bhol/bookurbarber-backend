@@ -90,27 +90,66 @@ public class SecurityConfig {
 
         return http.build();
     }
-
     @Bean
     public CorsConfigurationSource corsSource() {
+
         CorsConfiguration config = new CorsConfiguration();
-        // Support web, Capacitor Android, Capacitor iOS, and dev
-        List<String> origins = new java.util.ArrayList<>(
-            Arrays.asList(allowedOrigins.split(",")));
-        origins.add("capacitor://localhost");
-        origins.add("/*");
-        origins.add("ionic://localhost");
-        origins.add("https://localhost");
-        config.setAllowedOrigins(origins);
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:4200",
+                "https://bookurbarber-production.up.railway.app",
+                "capacitor://localhost",
+                "ionic://localhost",
+                "http://localhost",
+                "https://localhost",
+                "*"
+        ));
+
+        config.setAllowedMethods(List.of(
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE",
+                "OPTIONS"
+        ));
+
         config.setAllowedHeaders(List.of("*"));
+
+        config.setExposedHeaders(List.of(
+                "Authorization",
+                "Content-Type"
+        ));
+
         config.setAllowCredentials(true);
+
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
+//    @Bean
+//    public CorsConfigurationSource corsSource() {
+//        CorsConfiguration config = new CorsConfiguration();
+//        // Support web, Capacitor Android, Capacitor iOS, and dev
+//        List<String> origins = new java.util.ArrayList<>(
+//            Arrays.asList(allowedOrigins.split(",")));
+//        origins.add("capacitor://localhost");
+//        origins.add("/*");
+//        origins.add("ionic://localhost");
+//        origins.add("https://localhost");
+//        config.setAllowedOrigins(origins);
+//        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+//        config.setAllowedHeaders(List.of("*"));
+//        config.setAllowCredentials(true);
+//        config.setMaxAge(3600L);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//        return source;
+//    }
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {

@@ -28,6 +28,7 @@ public class BookingService {
     private final EmployeeRepository      empRepo;
     private final SlotBlockRepository     blockRepo;
     private final EmployeeService         employeeService;
+//    private final TwilioWhatsAppService wa;
     private final WhatsAppService         wa;
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd MMM yyyy");
@@ -98,7 +99,7 @@ public class BookingService {
             .build());
 
         // WhatsApp notify barber
-        String barberPhone = shop.getOwner().getPhone();
+        String barberPhone = shop.getPhone();
         String date = req.getBookingDate().format(DATE_FMT);
         String time = req.getSlotTime().format(TIME_FMT);
         String ref  = "#TRM" + b.getId();

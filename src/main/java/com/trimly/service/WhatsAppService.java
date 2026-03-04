@@ -188,6 +188,7 @@ public class WhatsAppService {
             )
         );
 
+        System.out.println(body);
         webClient.post()
             .uri(baseUrl + "/" + phoneNumberId + "/messages")
             .header("Authorization", "Bearer " + accessToken)

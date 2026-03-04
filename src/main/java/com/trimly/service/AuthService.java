@@ -42,6 +42,7 @@ public class AuthService {
     private final PasswordEncoder        encoder;
     private final JwtService             jwt;
     private final AuthenticationManager  authManager;
+//    private final TwilioWhatsAppService whatsApp;
     private final WhatsAppService        whatsApp;
 
     @Value("${app.platform.otp-expiry-minutes:10}")      private int  otpExpiryMinutes;
@@ -76,7 +77,7 @@ public class AuthService {
         user.setOtpAttempts(0);
         userRepo.save(user);
 
-//        whatsApp.sendOtp(phone, code, String.valueOf(otpExpiryMinutes));
+        whatsApp.sendOtp(phone, code, String.valueOf(otpExpiryMinutes));
         log.info("OTP sent to +91{}", phone);
     }
 

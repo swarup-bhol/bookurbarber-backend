@@ -76,8 +76,8 @@ app:
   whatsapp:
     enabled: true
     twilio:
-      account-sid: AC1864cd02d61edc509fba8c66740b8e1a
-      auth-token: 99ad79913cb72d75b29f9205e1e74360
+      account-sid: ${ACCOUNT_SID:}
+      auth-token: ${AUTH_TOKEN}
       sandbox-number: +14155238886
   # WhatsApp Business API (Meta Cloud API)
   # Set these in external application-secrets.properties or env vars

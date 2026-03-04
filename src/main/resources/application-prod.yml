@@ -83,7 +83,7 @@ app:
     access-token: ${WA_ACCESS_TOKEN:}
     twilio:
       account-sid: ${ACCOUNT_SID:}
-      auth-token: ${AUTH_TOKEN}
+      auth-token: ${AUTH_TOKEN:}
       sandbox-number: +14155238886
     # Template names (must be pre-approved in Meta Business Manager)
     template:

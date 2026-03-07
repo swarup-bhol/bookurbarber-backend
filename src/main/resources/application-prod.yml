@@ -9,8 +9,8 @@ spring:
     password: ${MYSQLPASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: ${DB_POOL_MAX:10}
-      minimum-idle: 2
+      maximum-pool-size: 25
+      minimum-idle: 10
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
@@ -44,7 +44,17 @@ spring:
 
 # ── Server ────────────────────────────────────────────────────────────────────
 server:
+  max-http-request-header-size: 16KB
+  shutdown: graceful
   port: ${PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 20
+    connection-timeout: 5s
   error:
     include-message: never
     include-stacktrace: never
@@ -56,12 +66,14 @@ app:
   # JWT
   jwt:
     secret: ${JWT_SECRET}
+    access-expiration-ms: 900000
+    refresh-expiration-ms: 2592000000
     # Access token: 1 year — effectively permanent until logout
     # We use refresh token deletion as the logout mechanism, not expiry
-    access-expiration-ms: ${JWT_ACCESS_MS:31536000000}
+#    access-expiration-ms: ${JWT_ACCESS_MS:31536000000}
     # Refresh token: 10 years — never expires unless user explicitly logs out
     # Stored in DB, deleted on logout → that IS the session termination
-    refresh-expiration-ms: ${JWT_REFRESH_MS:315360000000}
+#    refresh-expiration-ms: ${JWT_REFRESH_MS:315360000000}
 
   # CORS
   cors:
@@ -87,15 +99,15 @@ app:
       sandbox-number: +14155238886
     # Template names (must be pre-approved in Meta Business Manager)
     template:
-      booking-request: trimly_booking_request
-      booking-confirmed: trimly_booking_confirmed
-      booking-rejected: trimly_booking_rejected
-      booking-cancelled: trimly_booking_cancelled
-      booking-completed: trimly_booking_completed
-      reschedule-request: trimly_reschedule_request
-      reschedule-response: trimly_reschedule_response
-      otp-login: trimly_otp_login
-      password-reset: trimly_password_reset
+      booking-request: bookurbarber_booking_request
+      booking-confirmed: bookurbarber_booking_confirmed
+      booking-rejected: bookurbarber_booking_rejected
+      booking-cancelled: bookurbarber_booking_cancelled
+      booking-completed: bookurbarber_booking_completed
+      reschedule-request: bookurbarber_reschedule_request
+      reschedule-response: bookurbarber_reschedule_response
+      otp-login: bookurbarber_otp_login
+      password-reset: bookurbarber_password_reset
     language: en_IN
 
 # ── Actuator ──────────────────────────────────────────────────────────────────
